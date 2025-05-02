@@ -1,0 +1,59 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.SqlClient;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data;
+using System.Data.SqlClient;
+
+namespace DB_Connected
+{
+    public partial class frmLogin : Form
+    {
+        SqlConnection con = new SqlConnection("Server=DESKTOP-7LNDREK\\SQLEXPRESS;Database=DB_VS2022Hinampas;Integrated Security=True;");
+        SqlCommand cmd = new SqlCommand();
+        public frmLogin()
+        {
+            InitializeComponent();
+        }
+
+        private void Form2_Load(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void btnLogin_Click(object sender, EventArgs e)
+        {
+            SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM tbl_UserAccounts WHERE Username='" + txtUsername.Text +"' AND Password='" + txtPassword.Text + "'" , con);
+            DataSet ds = new DataSet();
+            da.Fill(ds);
+
+            
+            if (ds.Tables[0].Rows.Count > 0) { 
+                Form1 frm1 = new Form1();
+                this.Hide();
+                frm1.Show();
+            }
+            else
+            {
+                MessageBox.Show("User Accounts Doesn't Exist!", "Analog", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                txtUsername.Text = "";
+                txtPassword.Text = "";
+            }
+        }
+
+        private void btnClose_Click(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show("Are you sure to close this program", "Analog", MessageBoxButtons.YesNo);
+            if (result == DialogResult.Yes)
+            {
+                Close();
+            }
+        }
+    }
+}

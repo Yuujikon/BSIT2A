@@ -1,0 +1,81 @@
+import java.util.Scanner;
+
+class SavingsAccount {
+    private double balance;
+    public static double interestRate = 0;
+
+    public SavingsAccount() {
+        this.balance = 0;
+    }
+
+    public static void setInterestRate(double newRate) {
+        interestRate = newRate;
+    }
+
+    public static double getInterestRate() {
+        return interestRate;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void deposit(double amount) {
+        balance += amount;
+    }
+
+    public double withdraw(double amount) {
+        if (balance >= amount) {
+            balance -= amount;
+        }
+        else if(balance < amount){
+        	System.out.print("Balance Insufficient!");
+        } else {
+            amount = 0;
+        }
+        return amount;
+    }
+
+    public void addInterest() {
+        double interest = balance * interestRate;
+        balance += interest;
+    }
+
+    public static void showBalance(SavingsAccount account) {
+        System.out.println("Your Current Balance is " + account.getBalance());
+    }
+}
+
+class RunSavingsAccount {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        SavingsAccount savings = new SavingsAccount();
+        System.out.print("Enter Interest Rate: ");
+        SavingsAccount.interestRate = sc.nextDouble();
+
+        System.out.print("Enter Deposit Amount: ");
+        savings.deposit(sc.nextDouble());
+        System.out.println("Your balance is " + savings.getBalance());
+
+        System.out.print("Press D for another deposit or W to withdraw: ");
+        char userinput = sc.next().charAt(0);
+
+        if (userinput == 'D' || userinput == 'd') {
+            System.out.print("Enter Deposit Amount: ");
+            double amount = sc.nextDouble();
+            savings.deposit(amount);
+            if (amount >= 1000) {
+                savings.addInterest();
+                System.out.println("Your new balance is " + savings.getBalance());
+            } else {
+                System.out.println("Your new balance is " + savings.getBalance());
+            }
+        }
+        if (userinput == 'W' || userinput == 'w') {
+            System.out.print("Enter Withdraw Amount: ");
+            savings.withdraw(sc.nextDouble());
+            System.out.println("Your new balance is " + savings.getBalance());
+        }
+    }
+}

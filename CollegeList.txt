@@ -1,0 +1,134 @@
+/**
+ * @(#)CollegeList.java
+ *
+ * CollegeList application
+ *
+ * @author 
+ * @version 1.00 2024/10/15
+ */
+ 
+ 
+import java.util.*;
+
+public class CollegeList{
+	
+	public static void main (String[] args) {
+		Person p = new Person();
+		
+		Scanner sc = new Scanner(System.in);
+		
+		System.out.print("Select \n'E' = Employee\n'F' = Faculty\n'S' = Student\nEnter: ");
+		char input = sc.next().charAt(0);
+		
+		if(input == 'E' || input == 'e'){
+			Employee emp = new Employee();
+			System.out.print("Type employee's name, contact number, salary, and department.");
+			
+			System.out.print("Name: ");
+			p.setName(sc.nextLine());
+			System.out.print("Contact Number: ");
+			p.setContactNum(sc.nextLine());
+			System.out.print("Salary: ");
+			emp.setSalary(sc.nextDouble());
+			System.out.print("Department: ");
+			emp.setDepartment(sc.nextLine());
+		}else if(input == 'F' || input == 'f'){
+			Faculty f = new Faculty();
+			System.out.print("Type employee's name, contact number, Status.");
+			
+			System.out.print("Name: ");
+			p.setName(sc.nextLine());
+			System.out.print("Contact Number: ");
+			p.setContactNum(sc.nextLine());
+			System.out.print("'Y' = Regular\n'N' = Not Regular: ");
+			char regular = sc.next().charAt(0);
+			if(regular == 'Y'|| regular == 'y'){
+				f.setStatus(true);
+			}else{
+				f.setStatus(false);
+			}
+		}else if(input == 'S' || input == 's'){
+			Student st = new Student();
+			System.out.print("Type employee's name, contact number, Program, and Year Level.");
+			
+			System.out.print("Name: ");
+			p.setName(sc.nextLine());
+			System.out.print("Contact Number: ");
+			p.setContactNum(sc.nextLine());
+			System.out.print("Program(BSIT) or (BSTM): ");
+			st.setProgram(sc.nextLine());
+			System.out.print("Year Level(1 - 4): ");
+			st.setYearLevel(sc.nextInt());
+		}
+	}
+}
+
+class Person{
+	private String name;
+	private String contactNum;
+	
+	public void setName(String n){
+		name = n;
+	}
+	public String getName(){
+		return name;
+	}
+	
+	public void setContactNum(String c){
+		contactNum = c;
+	}
+	public  String getContactNum(){
+		return contactNum;
+	}
+}
+
+class Student extends Person{
+	private String program;
+	private int yearLevel;
+	
+	public void setProgram(String p){
+		program = p;
+	}
+	public String getProgram(){
+		return program;
+	}
+	
+	public void setYearLevel(int y){
+		yearLevel = y;
+	}
+	public int getYearLevel(){
+		return yearLevel;
+	}
+	
+}
+
+class Employee extends Person{
+	private double salary;
+	private String department;
+	
+	public void setSalary(double s){
+		salary = s;
+	}
+	public double getSalary(){
+		return salary;
+	}
+	
+	public void setDepartment(String d){
+		department = d;
+	}
+	public String getDepartment(){
+		return department;
+	}
+}
+
+class Faculty extends Employee{
+	private boolean status;
+	
+	public void setStatus(boolean r){
+		status = r;
+	}
+	public boolean isRegular(){
+		return status;
+	}
+	
+}
