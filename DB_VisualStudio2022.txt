@@ -1,0 +1,164 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data;
+using System.Data.SqlClient;
+
+namespace DB_Connected
+{
+    public partial class Form1 : Form
+    {
+        SqlConnection con = new SqlConnection("Server=DESKTOP-7LNDREK\\SQLEXPRESS;Database=DB_VS2022Hinampas;Integrated Security=True;");
+        SqlCommand cmd = new SqlCommand();
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        public void loading() {
+            cmd.Connection = con;
+            SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM tbl_Names WHERE isDeleted='NO'", con);
+            DataSet ds = new DataSet();
+            da.Fill(ds);
+            dataGridView1.DataSource = ds.Tables[0];
+            dataGridView1.Columns[3].Visible = false;
+        }
+        public void reset()
+        {
+            btnAdd.Text = "Add";
+            btnAdd.Enabled = true;
+            btnEdit.Text = "Edit";
+            btnClose.Text = "Close";
+            txtFname.Enabled = false;
+            txtLname.Enabled = false;
+            txtFname.Text = "";
+            txtLname.Text = "";
+            txtid.Text = "";
+            btnDelete.Enabled = false;
+            btnEdit.Enabled = false;
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            loading();
+        }
+
+        private void btnAdd_Click(object sender, EventArgs e)
+        {
+            if(btnAdd.Text == "Add")
+            {
+                btnAdd.Text = "Save";
+                btnClose.Text = "Cancel";
+                txtFname.Enabled = true;
+                txtLname.Enabled = true;
+                txtFname.Focus();
+            }else if(btnAdd.Text == "Save") {
+                if (txtFname.Text == "" && txtLname.Text == "") {
+                    MessageBox.Show("Please Input Firstname and Lastname!!!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+                else if (txtFname.Text == "") {
+                    MessageBox.Show("Please Input Firstname!!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                } else if (txtLname.Text == "") {
+                    MessageBox.Show("Please Input Lastname!!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+                else {
+                    con.Open();
+                    cmd.CommandText = "INSERT INTO tbl_Names(FirstName, LastName, isDeleted) Values ('" +
+                        txtFname.Text + "','" + txtLname.Text + "','NO')";
+                    cmd.ExecuteNonQuery();
+                    con.Close();
+                    MessageBox.Show("Succesfully saved a new user.");
+                    loading();
+                    reset();
+                }
+            }
+        }
+
+        private void btnClose_Click(object sender, EventArgs e)
+        {
+            if (btnClose.Text == "Close") {
+                Close();
+            }else if (btnClose.Text == "Cancel")
+            {
+                reset();
+            }
+        }
+
+        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            txtid.Text = dataGridView1.CurrentRow.Cells["ID"].Value.ToString();
+            txtFname.Text = dataGridView1.CurrentRow.Cells["FirstName"].Value.ToString();
+            txtLname.Text = dataGridView1.CurrentRow.Cells["LastName"].Value.ToString();
+
+            btnAdd.Enabled = false;
+            btnEdit.Enabled = true;
+            btnDelete.Enabled = true;
+            btnClose.Text = "Cancel";
+        }
+
+        private void btnEdit_Click(object sender, EventArgs e)
+        {
+            if (btnEdit.Text == "Edit") {
+                btnEdit.Text = "Update";
+                btnDelete.Enabled = false;
+                txtFname.Enabled = true;
+                txtLname.Enabled = true;
+            }else if (btnEdit.Text == "Update")
+            {
+                con.Open();
+                cmd.CommandText = "UPDATE tbl_Names SET FirstName='" + txtFname.Text + "',LastName='"+ txtLname.Text + "' WHERE ID='" + txtid.Text + "'";
+                cmd.ExecuteNonQuery();
+                con.Close();
+                MessageBox.Show("Successfully saved a new user");
+                loading();
+            }
+        }
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show("Are you sure to delete this record?", "Analog", MessageBoxButtons.YesNo);
+            if (result == DialogResult.Yes)
+            {
+                con.Open();
+                cmd.CommandText = "UPDATE tbl_Names SET isDeleted='YES' WHERE ID ='" + txtid.Text + "'";
+                cmd.ExecuteNonQuery();
+                con.Close();
+                MessageBox.Show("Successfully Deleted user");
+                loading();
+                reset();
+            }   
+        }
+
+        private void txtSearch_TextChanged(object sender, EventArgs e)
+        {
+            if (txtSearch.Text == "")
+            {
+                loading();
+            }
+            else
+            {
+                SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM tbl_Names WHERE isDeleted='NO' AND (FirstName LIKE '%" + txtSearch.Text + "%' OR LastName LIKE '%" + txtSearch.Text + "%')", con);
+                DataSet ds = new DataSet();
+                da.Fill(ds);
+
+                if (ds.Tables[0].Rows.Count > 0)
+                {
+                    dataGridView1.DataSource = ds.Tables[0];
+                    dataGridView1.Columns[3].Visible = false;
+                }
+                else
+                {
+                    MessageBox.Show("No Records Found!!", "Analog", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    txtSearch.Text = "";
+                }
+
+            }
+        }
+    }
+}
